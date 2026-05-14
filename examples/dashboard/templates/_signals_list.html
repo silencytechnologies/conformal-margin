@@ -1,0 +1,103 @@
+{# HTMX fragment: filter result + top and bottom pagination controls. #}
+
+{% macro pagination_bar(position) %}
+  {% set is_top = position == 'top' %}
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-5 py-3 bg-slate-50 {% if is_top %}border-b{% else %}border-t{% endif %} border-slate-100 text-sm">
+    <div class="text-slate-600 text-xs">
+      {% if total == 0 %}
+        No signals match the current filters.
+      {% else %}
+        Showing <span class="font-semibold text-slate-900">{{ start_index }}-{{ end_index }}</span>
+        of <span class="font-semibold text-slate-900">{{ total }}</span> signals
+      {% endif %}
+    </div>
+    {% if total_pages > 1 %}
+      <div class="flex items-center gap-1.5">
+        <button type="submit"
+                form="signals-form"
+                onclick="document.getElementById('signals-page').value=1"
+                {% if page <= 1 %}disabled{% endif %}
+                class="px-2.5 py-1 rounded-md border border-slate-200 bg-white text-xs hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed">&laquo; first</button>
+        <button type="submit"
+                form="signals-form"
+                onclick="document.getElementById('signals-page').value={{ page - 1 }}"
+                {% if page <= 1 %}disabled{% endif %}
+                class="px-2.5 py-1 rounded-md border border-slate-200 bg-white text-xs hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed">prev</button>
+        <span class="px-2 text-xs text-slate-600 tabular-nums">page <span class="font-semibold text-slate-900">{{ page }}</span> / {{ total_pages }}</span>
+        <button type="submit"
+                form="signals-form"
+                onclick="document.getElementById('signals-page').value={{ page + 1 }}"
+                {% if page >= total_pages %}disabled{% endif %}
+                class="px-2.5 py-1 rounded-md border border-slate-200 bg-white text-xs hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed">next</button>
+        <button type="submit"
+                form="signals-form"
+                onclick="document.getElementById('signals-page').value={{ total_pages }}"
+                {% if page >= total_pages %}disabled{% endif %}
+                class="px-2.5 py-1 rounded-md border border-slate-200 bg-white text-xs hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed">last &raquo;</button>
+      </div>
+    {% endif %}
+  </div>
+{% endmacro %}
+
+{{ pagination_bar('top') }}
+
+{% if signals %}
+  {% set sev_palette = {
+    'info': ('bg-slate-100', 'text-slate-700'),
+    'low': ('bg-blue-50', 'text-blue-700'),
+    'medium': ('bg-amber-50', 'text-amber-700'),
+    'high': ('bg-orange-50', 'text-orange-700'),
+    'critical': ('bg-red-50', 'text-red-700'),
+  } %}
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-50 text-xs text-slate-500 uppercase">
+        <tr>
+          <th class="text-left px-5 py-2 font-medium">Time</th>
+          <th class="text-left px-5 py-2 font-medium">Severity</th>
+          <th class="text-left px-5 py-2 font-medium">Kind</th>
+          <th class="text-left px-5 py-2 font-medium">Agents</th>
+          <th class="text-right px-5 py-2 font-medium">p-value</th>
+          <th class="text-right px-5 py-2 font-medium">Score</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        {% for sig in signals %}
+          {% set bg, fg = sev_palette.get(sig.severity.value, ('bg-slate-100', 'text-slate-700')) %}
+          <tr class="hover:bg-slate-50">
+            <td class="px-5 py-2 text-xs text-slate-500 whitespace-nowrap font-mono">{{ sig.timestamp.strftime('%H:%M:%S') }}</td>
+            <td class="px-5 py-2">
+              <span class="inline-block px-2 py-0.5 rounded text-xs font-medium {{ bg }} {{ fg }}">{{ sig.severity.value }}</span>
+            </td>
+            <td class="px-5 py-2 text-slate-700">
+              {{ sig.kind.value }}{% if sig.drift_event_type %} <span class="text-xs text-slate-400">({{ sig.drift_event_type.value }})</span>{% endif %}
+            </td>
+            <td class="px-5 py-2 font-mono text-xs text-slate-600">
+              {% if sig.affected_agents %}{{ sig.affected_agents | join(', ') }}{% else %}<span class="text-slate-400">fleet-wide</span>{% endif %}
+            </td>
+            <td class="px-5 py-2 text-right tabular-nums text-slate-600 text-xs">{{ '%.4f'|format(sig.p_value) }}</td>
+            <td class="px-5 py-2 text-right tabular-nums text-slate-600 text-xs">{{ '%.3f'|format(sig.score) }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="px-5 py-12 text-center text-sm text-slate-400">
+    {% if collector.status == 'running' %}
+      {% if total == 0 %}
+        No signals match the current filters. Try widening the search.
+      {% else %}
+        No signals on this page.
+      {% endif %}
+    {% elif collector.status == 'loading' %}
+      Waiting for the model to load.
+    {% elif collector.status == 'failed' %}
+      Model load failed.
+    {% else %}
+      Starting up.
+    {% endif %}
+  </div>
+{% endif %}
+
+{{ pagination_bar('bottom') }}

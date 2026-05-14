@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block page_title %}Drift Detection{% endblock %}
+{% block page_subtitle %}Page-Hinkley drift events detected over the calibration window.{% endblock %}
+
+{% block content %}
+<section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+  <header class="px-5 py-4 border-b border-slate-100">
+    <h2 class="text-base font-semibold text-slate-900">Drift events</h2>
+    <p class="text-xs text-slate-500 mt-0.5">
+      Emitted by <code class="px-1 py-0.5 rounded bg-slate-100 text-slate-700">DriftDetector</code>
+      when the Page-Hinkley statistic exceeds the configured threshold.
+    </p>
+  </header>
+  <div hx-get="/api/drift-events"
+       hx-trigger="load, every 5s"
+       hx-swap="innerHTML">
+    <div class="px-5 py-6 text-sm text-slate-400">Loading...</div>
+  </div>
+</section>
+{% endblock %}

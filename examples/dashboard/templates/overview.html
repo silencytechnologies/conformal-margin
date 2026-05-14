@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Two-column hero. Left: pipeline health. Right: loaded model. -->
+{% set is_running = collector.status == 'running' %}
+{% set total_signals = collector.signals | length %}
+{% set total_agents = collector.agent_last_seen | length %}
+<div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+
+  <!-- LEFT: pipeline health -->
+  <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+    <div class="flex items-center justify-between mb-3">
+      <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Pipeline health</p>
+      {% if is_running %}
+        <div class="flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          Live
+        </div>
+      {% elif collector.status == 'loading' %}
+        <div class="flex items-center gap-2 px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-medium">
+          <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+          Loading
+        </div>
+      {% elif collector.status == 'failed' %}
+        <div class="flex items-center gap-2 px-2.5 py-1 rounded-full bg-red-50 text-red-700 text-xs font-medium">
+          <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+          Failed
+        </div>
+      {% else %}
+        <div class="flex items-center gap-2 px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-medium">
+          <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+          Starting
+        </div>
+      {% endif %}
+    </div>
+    {% if not is_running %}
+      <p class="text-lg font-semibold text-slate-500">No data yet</p>
+      <p class="text-xs text-slate-400 mt-1">{{ collector.status_message }}</p>
+    {% else %}
+      <p class="text-2xl font-semibold text-slate-900">Healthy</p>
+      <div class="mt-4 grid grid-cols-2 gap-3">
+        <div>
+          <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Agents observed</p>
+          <p class="text-3xl font-semibold text-slate-900 mt-1 tabular-nums">{{ total_agents }}</p>
+        </div>
+        <div>
+          <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Signals collected</p>
+          <p class="text-3xl font-semibold text-slate-900 mt-1 tabular-nums">{{ total_signals }}</p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- RIGHT: loaded model -->
+  <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+    <div class="flex items-center justify-between mb-3">
+      <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Loaded model</p>
+      <span class="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-mono">SLM</span>
+    </div>
+    <p class="text-base font-semibold text-slate-900 break-words">{{ collector.model_id }}</p>
+    <p class="text-xs text-slate-400 mt-1">
+      Cached locally per DQ-029 model storage constraint.
+    </p>
+    <div class="mt-4 grid grid-cols-2 gap-3">
+      <div>
+        <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Status</p>
+        <p class="text-2xl font-semibold text-slate-900 mt-1 capitalize">{{ collector.status }}</p>
+      </div>
+      <div>
+        <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Source</p>
+        <p class="text-2xl font-semibold text-slate-900 mt-1">HuggingFace</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Four-card grid (HTMX swap every 3s) -->
+<div hx-get="/api/cards"
+     hx-trigger="load, every 3s"
+     hx-swap="innerHTML"
+     class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm animate-pulse">
+    <div class="h-3 bg-slate-100 rounded w-1/2 mb-3"></div>
+    <div class="h-7 bg-slate-100 rounded w-3/4"></div>
+  </div>
+  <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm animate-pulse">
+    <div class="h-3 bg-slate-100 rounded w-1/2 mb-3"></div>
+    <div class="h-7 bg-slate-100 rounded w-3/4"></div>
+  </div>
+  <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm animate-pulse">
+    <div class="h-3 bg-slate-100 rounded w-1/2 mb-3"></div>
+    <div class="h-7 bg-slate-100 rounded w-3/4"></div>
+  </div>
+  <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm animate-pulse">
+    <div class="h-3 bg-slate-100 rounded w-1/2 mb-3"></div>
+    <div class="h-7 bg-slate-100 rounded w-3/4"></div>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+  <!-- Top-10 agents (HTMX swap every 5s) -->
+  <section class="lg:col-span-1 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <header class="px-5 py-4 border-b border-slate-100">
+      <h2 class="text-base font-semibold text-slate-900">Top 10 agents by signal count</h2>
+      <p class="text-xs text-slate-500 mt-0.5">Ranked by anomaly signals received.</p>
+    </header>
+    <div hx-get="/api/top-agents"
+         hx-trigger="load, every 5s"
+         hx-swap="innerHTML">
+      <div class="px-5 py-6 text-sm text-slate-400">Loading...</div>
+    </div>
+  </section>
+
+  <!-- Signal rate chart (Chart.js, updated client-side every 5s) -->
+  <section class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+    <header class="mb-4 flex items-center justify-between">
+      <div>
+        <h2 class="text-base font-semibold text-slate-900">Signal rate</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Signals emitted per minute over the last 30 minutes.</p>
+      </div>
+    </header>
+    <div style="height: 260px;">
+      <canvas id="signalRateChart"></canvas>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // Chart.js: signal rate chart, updated every 5 seconds.
+  // We poll the JSON endpoint and call chart.update('none') for a
+  // smooth no-blink refresh.
+  (function () {
+    const ctx = document.getElementById('signalRateChart');
+    if (!ctx) return;
+
+    let chart = null;
+    const baseOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          mode: 'index',
+          intersect: false,
+          backgroundColor: 'rgba(15, 23, 42, 0.95)',
+          padding: 10,
+          cornerRadius: 8,
+        },
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { color: '#94a3b8', font: { size: 11 } },
+        },
+        y: {
+          beginAtZero: true,
+          grid: { color: '#f1f5f9' },
+          ticks: { color: '#94a3b8', font: { size: 11 }, stepSize: 1 },
+        },
+      },
+      interaction: { mode: 'nearest', intersect: false },
+    };
+
+    async function refresh() {
+      try {
+        const res = await fetch('/api/charts/signal-rate');
+        const data = await res.json();
+        if (!chart) {
+          chart = new Chart(ctx, { type: 'line', data, options: baseOptions });
+        } else {
+          chart.data = data;
+          chart.update('none');
+        }
+      } catch (err) {
+        console.error('chart refresh failed', err);
+      }
+    }
+
+    refresh();
+    setInterval(refresh, 5000);
+  })();
+</script>
+
+{% endblock %}

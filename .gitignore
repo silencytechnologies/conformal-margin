@@ -1,0 +1,41 @@
+# Environment / secrets
+.env
+*.env
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+logs/
+
+# Local Python virtual environment (managed by uv)
+.venv/
+
+# Downloaded LLM weights / HuggingFace cache.
+# Examples set HF_HOME=<project>/models so model weights stay
+# inside the project directory rather than ~/.cache/huggingface.
+# Excluded from version control because weights are gigabytes
+# and ship from HuggingFace directly.
+models/
+
+# IDE / editor metadata
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Coverage / test artifacts
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.tox/
+.ruff_cache/
+.mypy_cache/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/

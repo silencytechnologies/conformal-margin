@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}conformal-margin dashboard{% endblock %}</title>
+
+  <!-- Tailwind via Play CDN: no build step. -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- HTMX via CDN for HTML-fragment polling. -->
+  <script src="https://unpkg.com/htmx.org@2.0.3" defer></script>
+  <!-- Chart.js via CDN for live charts. -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <style>
+    body { font-family: ui-sans-serif, system-ui, sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+
+  <!-- Mobile-only backdrop, shown when sidebar is open. Click to close. -->
+  <div id="sidebar-backdrop"
+       class="hidden md:hidden fixed inset-0 bg-black/30 z-30"
+       onclick="toggleSidebar()"></div>
+
+  <div class="flex">
+    <!-- Sidebar -->
+    <aside id="sidebar"
+           class="hidden md:flex md:flex-col w-60 min-h-screen bg-white border-r border-slate-200 px-4 py-6
+                  fixed md:static top-0 left-0 z-40 md:z-auto">
+      <div class="mb-8">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold">cm</div>
+          <span class="font-semibold text-slate-900">conformal-margin</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-1">v0.1 demo dashboard</p>
+      </div>
+
+      <nav class="flex flex-col gap-1 text-sm">
+        {% set nav = [
+          ("overview", "Overview", "/"),
+          ("agents", "Agents", "/agents"),
+          ("signals", "Signals", "/signals"),
+          ("drift", "Drift Detection", "/drift"),
+          ("settings", "Settings", "/settings"),
+        ] %}
+        {% for key, label, href in nav %}
+          {% set is_active = (active_page == key) %}
+          <a href="{{ href }}"
+             class="px-3 py-2 rounded-lg
+                    {% if is_active %}bg-blue-50 text-blue-700 font-medium{% else %}text-slate-700 hover:bg-slate-100{% endif %}">
+            {{ label }}
+          </a>
+        {% endfor %}
+      </nav>
+
+      <div class="mt-auto pt-6 text-xs text-slate-400">
+        <p>Live demo with synthetic data.</p>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="flex-1 px-4 py-6 md:px-8 md:py-8 max-w-screen-2xl mx-auto w-full">
+      <header class="mb-6 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+          <!-- Hamburger toggle: only visible on mobile (<768px). -->
+          <button onclick="toggleSidebar()"
+                  aria-label="Toggle navigation"
+                  class="md:hidden p-2 rounded-lg hover:bg-slate-100 text-slate-700 flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <div class="min-w-0">
+            <h1 class="text-2xl font-semibold text-slate-900 truncate">{% block page_title %}Overview{% endblock %}</h1>
+            <p class="text-sm text-slate-500">{% block page_subtitle %}Live snapshot of the simulated fleet.{% endblock %}</p>
+          </div>
+        </div>
+        {% set status = collector.status if collector else 'starting' %}
+        <div class="hidden sm:flex items-center gap-2 text-xs flex-shrink-0">
+          {% if status == 'running' %}
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-emerald-700">Model running</span>
+          {% elif status == 'loading' %}
+            <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+            <span class="text-amber-700">Loading model</span>
+          {% elif status == 'failed' %}
+            <span class="w-2 h-2 rounded-full bg-red-500"></span>
+            <span class="text-red-700">Model load failed</span>
+          {% else %}
+            <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+            <span class="text-slate-500">Starting</span>
+          {% endif %}
+        </div>
+      </header>
+
+      {% if collector and collector.status in ('loading', 'starting') %}
+        <div class="mb-6 px-4 py-3 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-900">
+          {{ collector.status_message }} The dashboard will populate with live data once the model is ready.
+        </div>
+      {% elif collector and collector.status == 'failed' %}
+        <div class="mb-6 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-900">
+          <strong>Model load failed.</strong> {{ collector.status_message }}
+        </div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <script>
+    // Hamburger toggle for mobile sidebar (<768px). Toggles both the
+    // sidebar visibility and the backdrop overlay.
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebar-backdrop');
+      sidebar.classList.toggle('hidden');
+      backdrop.classList.toggle('hidden');
+    }
+    // Close the sidebar when a nav link is tapped on mobile.
+    document.querySelectorAll('#sidebar nav a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        if (window.innerWidth < 768) toggleSidebar();
+      });
+    });
+  </script>
+
+</body>
+</html>

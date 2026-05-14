@@ -1,0 +1,66 @@
+{# HTMX fragment: four status cards. Empty states when collector has no data. #}
+
+<!-- Active agents -->
+<div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+  <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Active agents</p>
+  {% if active_agents == 0 %}
+    <p class="text-3xl font-semibold text-slate-300 mt-1">&mdash;</p>
+    <p class="text-xs text-slate-400 mt-2">No agents observed yet.</p>
+  {% else %}
+    <p class="text-3xl font-semibold text-slate-900 mt-1">{{ active_agents }}</p>
+    <p class="text-xs text-slate-400 mt-2">Observed since startup.</p>
+  {% endif %}
+</div>
+
+<!-- Signals last hour -->
+<div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+  <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Signals (1h)</p>
+  {% if signals_last_hour == 0 %}
+    <p class="text-3xl font-semibold text-slate-300 mt-1">&mdash;</p>
+    <p class="text-xs text-slate-400 mt-2">No signals emitted yet.</p>
+  {% else %}
+    <p class="text-3xl font-semibold text-slate-900 mt-1">{{ signals_last_hour }}</p>
+    <div class="flex flex-wrap gap-1.5 mt-2 text-[10px]">
+      {% set palette = {
+        'info': ('bg-slate-100', 'text-slate-600'),
+        'low': ('bg-blue-50', 'text-blue-700'),
+        'medium': ('bg-amber-50', 'text-amber-700'),
+        'high': ('bg-orange-50', 'text-orange-700'),
+        'critical': ('bg-red-50', 'text-red-700'),
+      } %}
+      {% for sev, count in signals_by_severity.items() %}
+        {% if count > 0 %}
+          {% set bg, fg = palette.get(sev, ('bg-slate-100', 'text-slate-600')) %}
+          <span class="px-1.5 py-0.5 rounded {{ bg }} {{ fg }}">{{ sev }} {{ count }}</span>
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+<!-- Mean p-value -->
+<div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+  <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Mean p-value (1h)</p>
+  {% if mean_p_value is none %}
+    <p class="text-3xl font-semibold text-slate-300 mt-1">&mdash;</p>
+    <p class="text-xs text-slate-400 mt-2">No anomaly signals yet.</p>
+  {% else %}
+    <p class="text-3xl font-semibold text-slate-900 mt-1">{{ '%.3f'|format(mean_p_value) }}</p>
+    <p class="text-xs text-slate-400 mt-2">Closer to 0.5+ means "system normal".</p>
+  {% endif %}
+</div>
+
+<!-- Drift status -->
+<div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+  <p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Drift status</p>
+  {% if collector.status != 'running' %}
+    <p class="text-3xl font-semibold text-slate-300 mt-1">&mdash;</p>
+    <p class="text-xs text-slate-400 mt-2">Awaiting model.</p>
+  {% elif drift_active %}
+    <p class="text-3xl font-semibold text-orange-600 mt-1">Detected</p>
+    <p class="text-xs text-orange-500 mt-2">Page-Hinkley triggered in last 5 min.</p>
+  {% else %}
+    <p class="text-3xl font-semibold text-emerald-600 mt-1">None</p>
+    <p class="text-xs text-slate-400 mt-2">No drift in last 5 minutes.</p>
+  {% endif %}
+</div>

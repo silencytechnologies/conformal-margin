@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="52" viewBox="0 0 200 52">
+  <!-- Button background -->
+  <rect x="2" y="2" width="196" height="48" rx="5" ry="5" fill="#1A191A"/>
+  <!-- Border -->
+  <rect x="2" y="2" width="196" height="48" rx="5" ry="5" fill="none" stroke="#3a3a3a" stroke-width="0.8"/>
+  <!-- Text -->
+  <text x="100" y="31" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="15" font-weight="400" letter-spacing="3" fill="#d4cbbf" text-anchor="middle">discover</text>
+</svg>

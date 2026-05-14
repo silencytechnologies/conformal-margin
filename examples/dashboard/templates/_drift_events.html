@@ -1,0 +1,45 @@
+{% if signals %}
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-50 text-xs text-slate-500 uppercase">
+        <tr>
+          <th class="text-left px-5 py-2 font-medium">Time</th>
+          <th class="text-left px-5 py-2 font-medium">Drift type</th>
+          <th class="text-right px-5 py-2 font-medium">PH statistic</th>
+          <th class="text-left px-5 py-2 font-medium">Operator</th>
+          <th class="text-right px-5 py-2 font-medium">Cal window size</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        {% for sig in signals %}
+          <tr class="hover:bg-slate-50">
+            <td class="px-5 py-2 text-xs text-slate-500 whitespace-nowrap font-mono">{{ sig.timestamp.strftime('%H:%M:%S') }}</td>
+            <td class="px-5 py-2 text-slate-700 font-medium">
+              <span class="inline-block px-2 py-0.5 rounded bg-orange-50 text-orange-700 text-xs">
+                {{ sig.drift_event_type.value if sig.drift_event_type else '—' }}
+              </span>
+            </td>
+            <td class="px-5 py-2 text-right tabular-nums text-slate-700">{{ '%.2f'|format(sig.score) }}</td>
+            <td class="px-5 py-2 text-slate-600 text-xs font-mono">{{ sig.operator_name }}</td>
+            <td class="px-5 py-2 text-right tabular-nums text-xs text-slate-500">
+              {{ sig.metadata.get('calibration_window_size', '—') }}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="px-5 py-12 text-center text-sm text-slate-400">
+    No drift detected.
+    {% if collector.status == 'running' %}
+      The calibration window is stable.
+    {% elif collector.status == 'loading' %}
+      Waiting for the model to load.
+    {% elif collector.status == 'failed' %}
+      Model load failed.
+    {% else %}
+      Starting up.
+    {% endif %}
+  </div>
+{% endif %}

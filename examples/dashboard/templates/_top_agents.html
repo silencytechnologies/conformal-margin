@@ -1,0 +1,44 @@
+{# HTMX fragment: top-N agent rows. #}
+
+{% if rows %}
+  <table class="w-full text-sm">
+    <thead class="bg-slate-50 text-xs text-slate-500 uppercase">
+      <tr>
+        <th class="text-left px-5 py-2 font-medium">Agent</th>
+        <th class="text-right px-5 py-2 font-medium">Signals</th>
+        <th class="text-right px-5 py-2 font-medium">Last risk</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-100">
+      {% for row in rows %}
+        <tr class="hover:bg-slate-50">
+          <td class="px-5 py-2 font-mono text-slate-700">{{ row.agent_id }}</td>
+          <td class="px-5 py-2 text-right tabular-nums text-slate-900 font-medium">{{ row.signal_count }}</td>
+          <td class="px-5 py-2 text-right tabular-nums">
+            {% set lr = row.last_risk %}
+            {% if lr > 1.0 %}
+              <span class="text-red-600">{{ '%.2f'|format(lr) }}</span>
+            {% elif lr > 0.6 %}
+              <span class="text-amber-600">{{ '%.2f'|format(lr) }}</span>
+            {% else %}
+              <span class="text-slate-600">{{ '%.2f'|format(lr) }}</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="px-5 py-8 text-center text-sm text-slate-400">
+    {% if collector.status == 'running' %}
+      No anomaly signals yet. The model is processing prompts; signals
+      will appear after the first calibration window fills (about 30 seconds).
+    {% elif collector.status == 'loading' %}
+      Waiting for the model to load. No agents observed yet.
+    {% elif collector.status == 'failed' %}
+      Model load failed. No agents observed.
+    {% else %}
+      Starting up.
+    {% endif %}
+  </div>
+{% endif %}

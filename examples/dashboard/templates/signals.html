@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block page_title %}Signals{% endblock %}
+{% block page_subtitle %}Filterable view of every OperatorSignal emitted by BaselineOperator.{% endblock %}
+
+{% block content %}
+
+<!--
+  One form drives everything. Filter changes reset page to 1 via the
+  inline onchange handler on each control. Pagination buttons live in
+  the swappable fragment below and set the hidden #signals-page input
+  before re-submitting the form.
+-->
+<form id="signals-form"
+      hx-get="/api/signals-list"
+      hx-target="#signals-data"
+      hx-swap="innerHTML"
+      hx-trigger="load delay:100ms, change, keyup changed delay:300ms, every 5s">
+
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 mb-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+
+    <div>
+      <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">Severity</label>
+      <select name="severity" multiple size="5"
+              onchange="document.getElementById('signals-page').value=1"
+              class="mt-1 w-full rounded-lg border border-slate-200 bg-white text-sm focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100">
+        <option value="info">info</option>
+        <option value="low">low</option>
+        <option value="medium">medium</option>
+        <option value="high">high</option>
+        <option value="critical">critical</option>
+      </select>
+      <p class="text-[10px] text-slate-400 mt-1">Hold Ctrl/Cmd to multi-select.</p>
+    </div>
+
+    <div>
+      <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">Kind</label>
+      <select name="kind"
+              onchange="document.getElementById('signals-page').value=1"
+              class="mt-1 w-full rounded-lg border border-slate-200 bg-white text-sm py-1.5 px-2 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100">
+        <option value="">all kinds</option>
+        <option value="anomaly">anomaly</option>
+        <option value="drift">drift</option>
+      </select>
+    </div>
+
+    <div>
+      <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">Agent search</label>
+      <input type="text" name="agent_query"
+             placeholder="agent_id substring"
+             onchange="document.getElementById('signals-page').value=1"
+             oninput="document.getElementById('signals-page').value=1"
+             class="mt-1 w-full rounded-lg border border-slate-200 bg-white text-sm py-1.5 px-2 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100">
+    </div>
+
+    <div>
+      <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">p-value max</label>
+      <input type="number" name="p_value_max" step="0.001" min="0" max="1"
+             placeholder="e.g. 0.01"
+             onchange="document.getElementById('signals-page').value=1"
+             class="mt-1 w-full rounded-lg border border-slate-200 bg-white text-sm py-1.5 px-2 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100">
+      <p class="text-[10px] text-slate-400 mt-1">Show only signals with p_value &le; this.</p>
+    </div>
+
+    <div>
+      <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">Score min</label>
+      <input type="number" name="score_min" step="0.1"
+             placeholder="e.g. 1.0"
+             onchange="document.getElementById('signals-page').value=1"
+             class="mt-1 w-full rounded-lg border border-slate-200 bg-white text-sm py-1.5 px-2 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100">
+      <p class="text-[10px] text-slate-400 mt-1">Show only signals with score &ge; this.</p>
+    </div>
+
+  </div>
+
+  <input type="hidden" name="page" id="signals-page" value="1">
+  <input type="hidden" name="per_page" value="50">
+</form>
+
+<section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+  <div id="signals-data">
+    <div class="px-5 py-8 text-center text-sm text-slate-400">Loading...</div>
+  </div>
+</section>
+
+{% endblock %}

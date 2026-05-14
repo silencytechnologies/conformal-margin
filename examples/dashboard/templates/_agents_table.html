@@ -1,0 +1,51 @@
+{% if rows %}
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="bg-slate-50 text-xs text-slate-500 uppercase">
+        <tr>
+          <th class="text-left px-5 py-2 font-medium">Agent</th>
+          <th class="text-right px-5 py-2 font-medium">Signals</th>
+          <th class="text-right px-5 py-2 font-medium">Last risk</th>
+          <th class="text-left px-5 py-2 font-medium">Last prompt</th>
+          <th class="text-left px-5 py-2 font-medium">Last response</th>
+          <th class="text-right px-5 py-2 font-medium">Last seen</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        {% for row in rows %}
+          <tr class="hover:bg-slate-50">
+            <td class="px-5 py-2 font-mono text-slate-700 whitespace-nowrap">{{ row.agent_id }}</td>
+            <td class="px-5 py-2 text-right tabular-nums text-slate-900 font-medium">{{ row.signal_count }}</td>
+            <td class="px-5 py-2 text-right tabular-nums">
+              {% set lr = row.last_risk %}
+              {% if lr > 1.0 %}
+                <span class="text-red-600 font-medium">{{ '%.2f'|format(lr) }}</span>
+              {% elif lr > 0.6 %}
+                <span class="text-amber-600">{{ '%.2f'|format(lr) }}</span>
+              {% else %}
+                <span class="text-slate-600">{{ '%.2f'|format(lr) }}</span>
+              {% endif %}
+            </td>
+            <td class="px-5 py-2 text-slate-600 max-w-xs truncate" title="{{ row.last_prompt }}">{{ row.last_prompt }}</td>
+            <td class="px-5 py-2 text-slate-500 text-xs max-w-md truncate" title="{{ row.last_response }}">{{ row.last_response or '—' }}</td>
+            <td class="px-5 py-2 text-right text-xs text-slate-400 whitespace-nowrap">
+              {{ row.last_seen.strftime('%H:%M:%S') if row.last_seen else '—' }}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="px-5 py-12 text-center text-sm text-slate-400">
+    {% if collector.status == 'running' %}
+      No agents observed yet. First snapshot lands after ~10 seconds.
+    {% elif collector.status == 'loading' %}
+      Waiting for the model to load.
+    {% elif collector.status == 'failed' %}
+      Model load failed.
+    {% else %}
+      Starting up.
+    {% endif %}
+  </div>
+{% endif %}
