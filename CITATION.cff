@@ -1,0 +1,206 @@
+cff-version: 1.2.0
+message: "If you use this software in academic or technical work, please cite it as below."
+title: "conformal-margin"
+abstract: >-
+  Fleet-level security monitoring for AI agent deployments with formal
+  False-Positive-Rate guarantees via split conformal prediction. The library
+  composes robust nonconformity scoring (median + scaled MAD), inductive
+  conformal calibration with exact rank statistics, and Page-Hinkley drift
+  detection. Architecturally committed to detection without enforcement.
+type: software
+authors:
+  - family-names: "Rodewald"
+    given-names: "Gabriel"
+    affiliation: "Silency Technologies"
+    website: "https://silency.io"
+version: "0.1.0"
+date-released: "2026-05-15"
+url: "https://github.com/silencytechnologies/conformal-margin"
+repository-code: "https://github.com/silencytechnologies/conformal-margin"
+license-url: "https://github.com/silencytechnologies/conformal-margin/blob/main/LICENSE"
+keywords:
+  - conformal-prediction
+  - anomaly-detection
+  - agentic-ai
+  - ai-security
+  - robust-statistics
+  - drift-detection
+  - page-hinkley
+  - false-positive-rate
+  - calibration
+  - distribution-free
+references:
+  - type: book
+    authors:
+      - family-names: "Vovk"
+        given-names: "Vladimir"
+      - family-names: "Gammerman"
+        given-names: "Alexander"
+      - family-names: "Shafer"
+        given-names: "Glenn"
+    title: "Algorithmic Learning in a Random World"
+    publisher:
+      name: "Springer"
+    year: 2005
+    doi: "10.1007/b106715"
+    notes: >-
+      Foundational text for conformal prediction. The split conformal
+      construction and exact coverage guarantee used in this library
+      originate here.
+
+  - type: article
+    authors:
+      - family-names: "Shafer"
+        given-names: "Glenn"
+      - family-names: "Vovk"
+        given-names: "Vladimir"
+    title: "A Tutorial on Conformal Prediction"
+    journal: "Journal of Machine Learning Research"
+    volume: 9
+    start: 371
+    end: 421
+    year: 2008
+    notes: >-
+      Accessible introduction to conformal prediction; recommended starting
+      point for readers new to the framework.
+
+  - type: article
+    authors:
+      - family-names: "Angelopoulos"
+        given-names: "Anastasios N."
+      - family-names: "Bates"
+        given-names: "Stephen"
+    title: "Conformal Prediction: A Gentle Introduction"
+    journal: "Foundations and Trends in Machine Learning"
+    volume: 16
+    issue: 4
+    start: 494
+    end: 591
+    year: 2023
+    doi: "10.1561/2200000101"
+    notes: >-
+      Modern, practitioner-oriented introduction to conformal prediction
+      covering split conformal, classification, regression, and the
+      distinction between marginal and conditional coverage.
+
+  - type: article
+    authors:
+      - family-names: "Vovk"
+        given-names: "Vladimir"
+    title: "Conditional Validity of Inductive Conformal Predictors"
+    journal: "Machine Learning"
+    volume: 92
+    issue: "2-3"
+    start: 349
+    end: 376
+    year: 2012
+    doi: "10.1007/s10994-013-5355-6"
+    notes: >-
+      Cited for the distinction between marginal and conditional coverage.
+      The bound implemented in this library is marginal; readers should
+      understand the implications of that choice.
+
+  - type: book
+    authors:
+      - family-names: "Huber"
+        given-names: "Peter J."
+      - family-names: "Ronchetti"
+        given-names: "Elvezio M."
+    title: "Robust Statistics"
+    edition: "2"
+    publisher:
+      name: "Wiley"
+    year: 2009
+    isbn: "978-0-470-12990-6"
+    notes: >-
+      Canonical reference for robust estimators including the median
+      absolute deviation used in the RobustScorer component.
+
+  - type: article
+    authors:
+      - family-names: "Leys"
+        given-names: "Christophe"
+      - family-names: "Ley"
+        given-names: "Christophe"
+      - family-names: "Klein"
+        given-names: "Olivier"
+      - family-names: "Bernard"
+        given-names: "Philippe"
+      - family-names: "Licata"
+        given-names: "Laurent"
+    title: >-
+      Detecting outliers: Do not use standard deviation around the mean,
+      use absolute deviation around the median
+    journal: "Journal of Experimental Social Psychology"
+    volume: 49
+    issue: 4
+    start: 764
+    end: 766
+    year: 2013
+    doi: "10.1016/j.jesp.2013.03.013"
+    notes: >-
+      Practitioner-oriented argument for replacing mean+std with
+      median+MAD in outlier detection. Directly motivates the
+      RobustScorer design choice.
+
+  - type: article
+    authors:
+      - family-names: "Page"
+        given-names: "E. S."
+    title: "Continuous Inspection Schemes"
+    journal: "Biometrika"
+    volume: 41
+    issue: "1/2"
+    start: 100
+    end: 115
+    year: 1954
+    doi: "10.2307/2333009"
+    notes: >-
+      Original formulation of the Page-Hinkley sequential change-point
+      test used by the DriftDetector component.
+
+  - type: article
+    authors:
+      - family-names: "Gama"
+        given-names: "João"
+      - family-names: "Žliobaitė"
+        given-names: "Indrė"
+      - family-names: "Bifet"
+        given-names: "Albert"
+      - family-names: "Pechenizkiy"
+        given-names: "Mykola"
+      - family-names: "Bouchachia"
+        given-names: "Abdelhamid"
+    title: "A Survey on Concept Drift Adaptation"
+    journal: "ACM Computing Surveys"
+    volume: 46
+    issue: 4
+    start: 1
+    end: 37
+    year: 2014
+    doi: "10.1145/2523813"
+    notes: >-
+      Comprehensive survey of drift detection methods. Establishes the
+      taxonomy from which the one-directional Page-Hinkley choice is
+      made in this library.
+
+  - type: conference-paper
+    authors:
+      - family-names: "Han"
+        given-names: "Songqiao"
+      - family-names: "Hu"
+        given-names: "Xiyang"
+      - family-names: "Huang"
+        given-names: "Hailiang"
+      - family-names: "Jiang"
+        given-names: "Minqi"
+      - family-names: "Zhao"
+        given-names: "Yue"
+    title: "ADBench: Anomaly Detection Benchmark"
+    collection-title: "Advances in Neural Information Processing Systems"
+    volume: 35
+    year: 2022
+    notes: >-
+      Reference benchmark suite for anomaly detection methods. Cited as
+      the kind of empirical validation conformal-margin has not yet
+      undergone; future work.
