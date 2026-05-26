@@ -512,7 +512,7 @@ Adapting these patterns to streaming workloads, multi-tenant deployments, and ac
 
 <div align="center">
 
-<a href="https://silency.io">
+<a href="https://silency.io?utm_source=github&utm_medium=readme&utm_campaign=conformal-margin">
   <img src="https://img.shields.io/badge/Website-1A191A?style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNhNjliOGUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIvPjxwYXRoIGQ9Ik0yIDEyaDIwIi8+PHBhdGggZD0iTTEyIDJhMTUuMyAxNS4zIDAgMCAxIDQgMTAgMTUuMyAxNS4zIDAgMCAxLTQgMTAgMTUuMyAxNS4zIDAgMCAxLTQtMTAgMTUuMyAxNS4zIDAgMCAxIDQtMTAiLz48L3N2Zz4=&logoColor=a69b8e" alt="Website">
 </a>&nbsp;
 <a href="https://www.linkedin.com/in/silency-technologies-a2378239a/">
@@ -521,7 +521,7 @@ Adapting these patterns to streaming workloads, multi-tenant deployments, and ac
 
 <br>
 
-<sub>Built by <a href="https://silency.io">Silency Technologies</a></sub>
+<sub>Built by <a href="https://silency.io?utm_source=github&utm_medium=readme&utm_campaign=conformal-margin">Silency Technologies</a></sub>
 <br>
 <sub>&copy; 2026 Silency Technologies. All rights reserved.</sub>
 
