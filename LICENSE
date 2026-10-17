@@ -1,4 +1,4 @@
-Silency Technologies Non-Commercial License v1.0
+Silency Technologies Non-Commercial License v1.1
 
 Copyright (c) 2026 Silency Technologies
 https://github.com/silencytechnologies
@@ -6,7 +6,8 @@ https://github.com/silencytechnologies
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to use,
 copy, modify, and redistribute the Software for personal, educational, or
-non-commercial purposes, subject to the following conditions:
+non-commercial purposes, subject to the following conditions. Only the
+uses listed in this license are permitted; everything else is prohibited.
 
 1. ATTRIBUTION
    All copies, modifications, or derivative works must retain this license
@@ -14,7 +15,7 @@ non-commercial purposes, subject to the following conditions:
    https://github.com/silencytechnologies
 
 2. NO BUSINESS USE
-   The Software may not be used, downloaded, clones, copied, modified, or deployed by any
+   The Software may not be used, downloaded, cloned, copied, modified, or deployed by any
    business, company, enterprise, or other commercial entity, regardless
    of whether the use generates revenue or direct financial benefit.
    This includes, but is not limited to: running the Software on company
@@ -23,7 +24,12 @@ non-commercial purposes, subject to the following conditions:
 
 3. BUSINESS LICENSING
    Any use by a business entity requires prior written permission from
-   the author. Contact: https://github.com/silencytechnologies
+   the author. Contact: https://silency.io/#contact
+
+4. EVERYTHING ELSE IS PROHIBITED
+   Any use, act or right that this license does not expressly grant is
+   prohibited. Such rights are reserved to Silency Technologies, and
+   silence or ambiguity in this license never grants permission.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
